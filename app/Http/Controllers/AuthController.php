@@ -12,18 +12,19 @@ class AuthController extends Controller
     public function register(Request $request){
         // Validate fields
         $data = $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6|confirmed'
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|unique:users',
+            'password' => 'required|min:6|string|confirmed'
         ]);
 
         // Create user
-        $user = User::created([
+        $user = User::create([
             'name' => $data['name'],
-            'emai' => $data['email'],
+            'email' => $data['email'],
             'password' => bcrypt($data['password'])
         ]);
 
+        // return user 5& Token in response
         return response([
             'user' => $user,
             'token' => $user->createToken('secret')->plainTextToken
@@ -40,7 +41,7 @@ class AuthController extends Controller
         ]);
 
         //attemp Login
-        if(!Auth::attemp($data))
+        if(!Auth::attempt($data))
         {
             return response([
                 'message' => 'Invalid Credentials'
@@ -49,18 +50,25 @@ class AuthController extends Controller
 
         // return user 5& Token in response
         return response([
-            'user' =>  auth()->user,
-            'token' => auth()->user->createToken('secret')->plainTextToken
+            'user' =>  auth()->user(),
+            'token' => auth()->user()->createToken('secret')->plainTextToken
         ], 200);
     }
 
 
     // Logout
-    public function logout()
-    {
+    public function logout(){
         auth()->user()->tokens()->delete();
         return response([
-           'message' => 'Logout Success'
+            'message' => 'Logout Success'
+        ], 200);
+    }
+
+
+    // get User details
+    public function user(){
+        return response([
+            'user' => auth()->user()
         ], 200);
     }
 }
