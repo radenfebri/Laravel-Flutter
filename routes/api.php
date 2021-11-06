@@ -30,6 +30,7 @@ use App\Http\Controllers\PostController;
     Route::group(['middleware' => ['auth:sanctum']], function () {
         // User
         Route::get('/user', [AuthController::class, 'user']);
+        Route::put('/user', [AuthController::class, 'update']);
         Route::post('/logout', [AuthController::class, 'logout']);
 
         // Post
@@ -41,10 +42,10 @@ use App\Http\Controllers\PostController;
 
         // Comment
         Route::get('/posts/{id}/comments', [CommentController::class, 'index']);
-        Route::post('/posts/{id}/{id}/comments', [CommentController::class, 'store']);
+        Route::post('/posts/{id}/comments', [CommentController::class, 'store']);
         Route::put('/comments/{id}', [CommentController::class, 'update']);
         Route::delete('/comments/{id}', [CommentController::class, 'destroy']);
 
         // Like
-        Route::post('/post/{id}/likes', [LikeController::class, 'likeOrUnlike']);
+        Route::post('/posts/{id}/likes', [LikeController::class, 'likeOrUnlike']);
     });
